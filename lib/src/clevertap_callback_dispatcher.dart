@@ -23,18 +23,21 @@ void callbackDispatcher() {
   );
 
   // This is where we handle background events from the native portion of the plugin.
-  _channel.setMethodCallHandler((MethodCall call,) async {
+  _channel.setMethodCallHandler((
+    MethodCall call,
+  ) async {
     print("callbackDispatcher called!");
     if (call.method == 'onKilledStateNotificationClicked') {
       final CallbackHandle handle =
-      CallbackHandle.fromRawHandle(call.arguments['userCallbackHandle']);
+          CallbackHandle.fromRawHandle(call.arguments['userCallbackHandle']);
 
       // PluginUtilities.getCallbackFromHandle performs a lookup based on the
       // callback handle and returns a tear-off of the original callback.
       Function? callback = PluginUtilities.getCallbackFromHandle(handle);
 
       try {
-        Map<dynamic, dynamic> notificationClickedPayload = Map<String, dynamic>.from(call.arguments['payload']);
+        Map<dynamic, dynamic> notificationClickedPayload =
+            Map<String, dynamic>.from(call.arguments['payload']);
         await callback!(notificationClickedPayload);
       } catch (e) {
         debugPrint(

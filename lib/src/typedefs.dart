@@ -21,10 +21,13 @@ typedef void CleverTapPushClickedPayloadReceivedHandler(
     Map<String, dynamic> map);
 typedef void CleverTapPushPermissionResponseReceivedHandler(bool accepted);
 typedef void CleverTapOnVariablesChangedHandler(Map<String, dynamic> variables);
-typedef void CleverTapOnOneTimeVariablesChangedHandler(Map<String, dynamic> variables);
+typedef void CleverTapOnOneTimeVariablesChangedHandler(
+    Map<String, dynamic> variables);
 typedef void CleverTapOnValueChangedHandler(Map<String, dynamic> variable);
-typedef void CleverTapOnVariablesChangedAndNoDownloadsPendingHandler(Map<String, dynamic> variables);
-typedef void CleverTapOnceVariablesChangedAndNoDownloadsPendingHandler(Map<String, dynamic> variables);
+typedef void CleverTapOnVariablesChangedAndNoDownloadsPendingHandler(
+    Map<String, dynamic> variables);
+typedef void CleverTapOnceVariablesChangedAndNoDownloadsPendingHandler(
+    Map<String, dynamic> variables);
 typedef void CleverTapOnFileValueChangedHandler(Map<String, dynamic> variable);
 typedef void CleverTapOnKVDataChangedHandler(Map<String, Object?> kvData);
 
@@ -37,4 +40,5 @@ typedef void CleverTapOnKilledStateNotificationClickedHandler(
 typedef void CleverTapCustomTemplatePresentHandler(String templateName);
 typedef void CleverTapCustomTemplateCloseHandler(String templateName);
 typedef void CleverTapCustomFunctionPresentHandler(String functionName);
+
 /// custom code templates - end

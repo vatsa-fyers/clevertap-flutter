@@ -9,3 +9,4 @@ build/
 example/pubspec.lock
 pubspec.lock
 
+.vscode/settings.json
