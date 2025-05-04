@@ -1,7 +1,7 @@
 @JS("clevertap")
 library clevertap;
 
-import 'package:js/js.dart';
+import 'dart:js_interop';
 
 @JS('init')
 external void init(

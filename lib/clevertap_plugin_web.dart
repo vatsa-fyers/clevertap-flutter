@@ -1,11 +1,10 @@
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:clevertap_plugin/src/clevertap_plugin_web_binding.dart';
 import 'package:clevertap_plugin/src/typedefs.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:js/js_util.dart' as js_util;
-import 'package:js/js.dart';
 import 'clevertap_plugin.dart' as MainPlugin;
 
 /// A web implementation of the CleverTapPlugin plugin.
@@ -137,7 +136,7 @@ class CleverTapPluginWeb {
 
   void _toggleInbox(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
-    toggleInbox(js_util.jsify({'rect': args['rect']}));
+    toggleInbox({'rect': args['rect']}.jsify()!);
   }
 
   /// Pushes a basic event
@@ -145,7 +144,7 @@ class CleverTapPluginWeb {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     String eventName = args['eventName'] as String;
     Object? eventData = args['eventData'];
-    event_push(eventName, js_util.jsify(eventData ?? {}));
+    event_push(eventName, (eventData ?? {}).jsify()!);
   }
 
   /// Pushed a Charged event
@@ -153,45 +152,45 @@ class CleverTapPluginWeb {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     Map chargeDetails = args['chargeDetails'] as Map;
     chargeDetails["Items"] = args['items'] as List;
-    event_push("Charged", js_util.jsify(chargeDetails));
+    event_push("Charged", chargeDetails.jsify()!);
   }
 
   /// OnUserLogin request
   void _onUserLogin(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
-    onUserLogin_push(js_util.jsify({"Site": args['profile']}));
+    onUserLogin_push({"Site": args['profile']}.jsify()!);
   }
 
   /// enable web push
   void _enableWebPush(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
-    notifications_push(js_util.jsify(args));
+    notifications_push(args.jsify()!);
   }
 
   /// enable web push for enabling new prompt
   void _enableWebPushNotifications(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
-    notifications_enable(js_util.jsify(args));
+    notifications_enable(args.jsify()!);
   }
 
   /// Profile push request
   void _profileSet(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
-    onUserLogin_push(js_util.jsify({"Site": args['profile']}));
+    onUserLogin_push({"Site": args['profile']}.jsify()!);
   }
 
   /// Set Optout flag
   void _setOptOut(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     bool value = args['value'] as bool;
-    privacy_push(js_util.jsify({"optOut": value}));
+    privacy_push({"optOut": value}.jsify()!);
   }
 
   /// Set useIP flag
   void _setUseIP(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     bool value = args['value'] as bool;
-    privacy_push(js_util.jsify({"useIP": value}));
+    privacy_push({"useIP": value}.jsify()!);
   }
 
   /// Set Log Level
@@ -294,8 +293,7 @@ class CleverTapPluginWeb {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     String msgId = args['msgId'] as String;
     String pivotId = args['pivotId'] as String;
-    renderNotificationViewed(
-        js_util.jsify({"msgId": msgId, "pivotId": pivotId}));
+    renderNotificationViewed({"msgId": msgId, "pivotId": pivotId}.jsify()!);
   }
 
   /// Method for notification clicked
@@ -303,8 +301,7 @@ class CleverTapPluginWeb {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     String msgId = args['msgId'] as String;
     String pivotId = args['pivotId'] as String;
-    renderNotificationClicked(
-        js_util.jsify({"msgId": msgId, "pivotId": pivotId}));
+    renderNotificationClicked({"msgId": msgId, "pivotId": pivotId}.jsify()!);
   }
 
   /// Get total inbox message count
@@ -319,19 +316,21 @@ class CleverTapPluginWeb {
 
   /// Get All Inbox Messages
   List _getAllInboxMessages(MethodCall call) {
-    return List.from((js_util.dartify(getAllInboxMessages()) as Map).values);
+    var messages = getAllInboxMessages();
+    return List.from((messages).values);
   }
 
   /// Get All Inbox Unread Messages
   List _getUnreadInboxMessages(MethodCall call) {
-    return List.from((js_util.dartify(getUnreadInboxMessages()) as Map).values);
+    var messages = getUnreadInboxMessages();
+    return List.from((messages).values);
   }
 
   /// Get Inbox Message for the given message-id
   Object _getInboxMessageForId(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     String messageId = args['messageId'] as String;
-    return (js_util.dartify(getInboxMessageForId(messageId)) as Map);
+    return getInboxMessageForId(messageId) as Map;
   }
 
   /// Delete Message for the given message-id
@@ -362,7 +361,7 @@ class CleverTapPluginWeb {
   void _defineVariables(MethodCall call) {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     Object variables = args['variables'] as Object;
-    defineVariables(js_util.jsify(variables));
+    defineVariables(variables.jsify()!);
   }
 
   /// Sync Variables
@@ -373,33 +372,33 @@ class CleverTapPluginWeb {
   /// Fetch Variables
   Future<bool> _fetchVariables(MethodCall call) async {
     var completer = Completer<bool>();
-    fetchVariables(allowInterop(() => completer.complete(true)));
+    fetchVariables(() => completer.complete(true));
     return completer.future;
   }
 
   static void onValueChanged(
       String name, CleverTapOnValueChangedHandler handler) {
-    onValueChangedImpl(name, allowInterop((object) {
-      var dartObject = js_util.dartify(object);
-      var convertedMap = (dartObject as Map)
+    onValueChangedImpl(name, (object) {
+      var dartObject = object as Map;
+      var convertedMap = dartObject
           .map((key, value) => MapEntry(key.toString(), value as dynamic));
       handler(convertedMap.cast<String, dynamic>());
-    }));
+    });
   }
 
   static void onVariablesChanged(CleverTapOnVariablesChangedHandler handler) {
-    onVariablesChangedImpl(allowInterop((object) {
-      var dartObject = js_util.dartify(object);
-      var convertedMap = (dartObject as Map)
+    onVariablesChangedImpl((object) {
+      var dartObject = object as Map;
+      var convertedMap = dartObject
           .map((key, value) => MapEntry(key.toString(), value as dynamic));
       handler(convertedMap.cast<String, dynamic>());
-    }));
+    });
   }
 
   Future<Map<Object?, Object?>> _getVariables(MethodCall call) async {
     var completer = Completer<Map<Object?, Object?>>();
-    getVariables(allowInterop((object) =>
-        completer.complete(js_util.dartify(object) as Map<Object?, Object?>)));
+    getVariables(
+        (object) => completer.complete(object as Map<Object?, Object?>));
     return completer.future;
   }
 
@@ -407,19 +406,17 @@ class CleverTapPluginWeb {
     Map<Object?, Object?> args = call.arguments as Map<Object?, Object?>;
     String name = args['name'] as String;
     var completer = Completer<dynamic>();
-    getVariable(name,
-        allowInterop((object) => completer.complete(js_util.dartify(object))));
+    getVariable(name, (object) => completer.complete(object));
     return completer.future;
   }
 
   static void addKVDataChangeListener(
       CleverTapOnKVDataChangedHandler handler) async {
-    addDocumentEventListenerImpl('CT_web_native_display',
-        allowInterop((object) {
-      var object_ = js_util.dartify(object) as Map<Object?, Object?>;
+    addDocumentEventListenerImpl('CT_web_native_display', (object) {
+      var object_ = object as Map<Object?, Object?>;
       Map<String, Object?> data = Map.fromEntries(object_.entries
           .map((entry) => MapEntry(entry.key.toString(), entry.value)));
       handler(data);
-    }));
+    });
   }
 }
